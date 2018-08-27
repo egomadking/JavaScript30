@@ -1,11 +1,8 @@
-//TODO how to stop already playing sound
-
 var buttons = document.getElementsByClassName('key');
 var sounds = document.getElementsByTagName('audio');
-var playing;
 
 for (var i = 0; i < buttons.length; i++) {
-  buttons[i].addEventListener('click', function(){
+  buttons[i].addEventListener('click', function (e) {
     var code = this.getAttribute('data-key');
     playSound(code);
   });
@@ -16,18 +13,27 @@ window.addEventListener('keydown', function () {
   playSound(code);
 });
 
-function playSound(code){
-  var code = code.toString();
-  for(var i=0; i<sounds.length; i++){
-    if (code === sounds[i].dataset.key){
+function playSound(code) {
+  var codeNum = code.toString();
+  for (var i = 0; i < sounds.length; i++) {
+    sounds[i].pause();
+    sounds[i].currentTime = 0;
+    buttons[i].classList.remove('playing');
+    if (codeNum === sounds[i].dataset.key) {
       sounds[i].play();
-      sounds[i].addEventListener('ended', function() {
-        buttons[i].classList.remove('playing'); // here i prob
-      });
+      sounds[i].addEventListener('ended', stopSound);
     }
-    if(code === buttons[i].dataset.key){
+    if (codeNum === buttons[i].dataset.key) {
       buttons[i].classList.add('playing');
     }
   }
-  //set temp class
+}
+
+function stopSound(event) {
+  var key = this.dataset.key;
+  for (var i = 0; i < buttons.length; i++) {
+    if (buttons[i].dataset.key === key) {
+      buttons[i].classList.remove('playing');
+    }
+  }
 }
