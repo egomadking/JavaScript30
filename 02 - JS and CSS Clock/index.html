@@ -1,80 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>JS + CSS Clock</title>
-</head>
-<body>
-
-
+  <head>
+    <meta charset="UTF-8" />
+    <title>JS + CSS Clock</title>
+  </head>
+  <body>
     <div class="clock">
       <div class="clock-face">
         <div class="hand hour-hand"></div>
         <div class="hand min-hand"></div>
         <div class="hand second-hand"></div>
+        <div class="pivot"></div>
       </div>
     </div>
 
+    <style>
+      html {
+        background: #018ded url(http://unsplash.it/1500/1000?image=881&blur=50);
+        background-size: cover;
+        font-family: 'helvetica neue';
+        text-align: center;
+        font-size: 10px;
+      }
 
-  <style>
-    html {
-      background:#018DED url(http://unsplash.it/1500/1000?image=881&blur=50);
-      background-size:cover;
-      font-family:'helvetica neue';
-      text-align: center;
-      font-size: 10px;
-    }
+      body {
+        margin: 0;
+        font-size: 2rem;
+        display: flex;
+        flex: 1;
+        min-height: 100vh;
+        align-items: center;
+      }
 
-    body {
-      margin: 0;
-      font-size: 2rem;
-      display:flex;
-      flex:1;
-      min-height: 100vh;
-      align-items: center;
-    }
+      .clock {
+        width: 30rem;
+        height: 30rem;
+        border: 20px solid white;
+        border-radius: 50%;
+        margin: 50px auto;
+        position: relative;
+        padding: 2rem;
+        box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1), inset 0 0 0 3px #efefef,
+          inset 0 0 10px black, 0 0 10px rgba(0, 0, 0, 0.2);
+      }
 
-    .clock {
-      width: 30rem;
-      height: 30rem;
-      border:20px solid white;
-      border-radius:50%;
-      margin:50px auto;
-      position: relative;
-      padding:2rem;
-      box-shadow:
-        0 0 0 4px rgba(0,0,0,0.1),
-        inset 0 0 0 3px #EFEFEF,
-        inset 0 0 10px black,
-        0 0 10px rgba(0,0,0,0.2);
-    }
+      .clock-face {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform: translateY(
+          -3px
+        ); /* account for the height of the clock hands */
+      }
 
-    .clock-face {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transform: translateY(-3px); /* account for the height of the clock hands */
-    }
+      .hand {
+        width: 50%;
+        height: 6px;
+        background: black;
+        position: absolute;
+        top: 50%;
+        transform-origin: 100%;
+      }
 
-    .hand {
-      width:50%;
-      height:6px;
-      background:black;
-      position: absolute;
-      top:50%;
-      transform-origin: 100%;
-    }
+      .second-hand {
+        background-color: #880000;
+        transform: rotate(90deg) scale(0.9, 1);
+        transition: all 0.5s;
+        transition-timing-function: cubic-bezier(0.04, 2.39, 0.07, 0.94);
+      }
 
-  </style>
+      .min-hand {
+        transform: rotate(90deg);
+      }
 
-  <script>
-    var time = new Date();
+      .hour-hand {
+        transform: rotate(240deg) scale(0.6, 1);
+      }
 
-    function translateAngle(num){
-      
-    }
+      .pivot {
+        background-color: rgb(207, 207, 207);
+        border: 2px solid black;
+        border-radius: 50%;
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-origin: 100%;
+        transform: scale(2) translateY(-1.5px);
+      }
+    </style>
 
+    <script>
+      var secHand = document.querySelector('.second-hand');
+      var minHand = document.querySelector('.min-hand');
+      var hourHand = document.querySelector('.hour-hand');
+      var oldSec;
 
-  </script>
-</body>
+      function moveSecond(second) {
+        var adj = second * 6 + 90; //90deg offset for starting @45sec
+        if (adj > 360) {
+          adj = adj - 360;
+        }
+        secHand.style.cssText =
+          'transform: rotate(' + adj + 'deg) scale(0.9, 1)';
+      }
+
+      function moveMinute(minute, second) {
+        var secAngle = second / 10;
+        var adj = minute * 6 + 90 + secAngle;
+        if (adj > 360) {
+          adj = adj - 360;
+        }
+        minHand.style.cssText = 'transform: rotate(' + adj + 'deg)';
+      }
+
+      function moveHour(hour, min) {
+        var minAngle = min / 2;
+        var adj = hour * 30 + 90 + minAngle;
+        if (adj > 360) {
+          adj = adj - 360;
+        }
+        hourHand.style.cssText =
+          'transform: rotate(' + adj + 'deg) scale(0.6, 1)';
+      }
+
+      function init() {
+        var time = new Date();
+        var sec = time.getSeconds();
+        var min = time.getMinutes();
+        var hour = time.getHours();
+
+        if (sec != oldSec) {
+          moveSecond(sec);
+          moveMinute(min, sec);
+          moveHour(hour, min);
+          oldSec = sec;
+          //console.log(sec, ' ', oldSec);
+        }
+        window.requestAnimationFrame(init);
+      }
+
+      window.requestAnimationFrame(init);
+    </script>
+  </body>
 </html>
