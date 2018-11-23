@@ -60,21 +60,13 @@
         position: absolute;
         top: 50%;
         transform-origin: 100%;
+        transform: rotate(90deg);
       }
 
       .second-hand {
         background-color: #880000;
-        transform: rotate(90deg) scale(0.9, 1);
-        transition: all 0.5s;
+        transition: all 0.05s;
         transition-timing-function: cubic-bezier(0.04, 2.39, 0.07, 0.94);
-      }
-
-      .min-hand {
-        transform: rotate(90deg);
-      }
-
-      .hour-hand {
-        transform: rotate(240deg) scale(0.6, 1);
       }
 
       .pivot {
@@ -95,32 +87,23 @@
       var secHand = document.querySelector('.second-hand');
       var minHand = document.querySelector('.min-hand');
       var hourHand = document.querySelector('.hour-hand');
-      var oldSec;
+      var oldSec, holdSec;
 
       function moveSecond(second) {
-        var adj = second * 6 + 90; //90deg offset for starting @45sec
-        if (adj > 360) {
-          adj = adj - 360;
-        }
+        var adj = second * 6 + 90;
         secHand.style.cssText =
           'transform: rotate(' + adj + 'deg) scale(0.9, 1)';
       }
 
       function moveMinute(minute, second) {
         var secAngle = second / 10;
-        var adj = minute * 6 + 90 + secAngle;
-        if (adj > 360) {
-          adj = adj - 360;
-        }
+        var adj = minute * 6 + secAngle + 90;
         minHand.style.cssText = 'transform: rotate(' + adj + 'deg)';
       }
 
       function moveHour(hour, min) {
         var minAngle = min / 2;
-        var adj = hour * 30 + 90 + minAngle;
-        if (adj > 360) {
-          adj = adj - 360;
-        }
+        var adj = hour * 30 + minAngle + 90;
         hourHand.style.cssText =
           'transform: rotate(' + adj + 'deg) scale(0.6, 1)';
       }
@@ -136,7 +119,6 @@
           moveMinute(min, sec);
           moveHour(hour, min);
           oldSec = sec;
-          //console.log(sec, ' ', oldSec);
         }
         window.requestAnimationFrame(init);
       }
