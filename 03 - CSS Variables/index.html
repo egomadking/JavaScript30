@@ -14,7 +14,7 @@
     <input id="spacing" type="range" name="spacing" min="10" max="200" value="10" data-sizing="px" data-taco="taco">
 
     <label for="blur">Blur:</label>
-    <input id="blur" type="range" name="blur" min="0" max="25" value="10" data-sizing="px">
+    <input id="blur" type="range" name="blur" min="0" max="5" value="2" data-sizing="px">
 
     <label for="base">Base Color</label>
     <input id="base" type="color" name="base" value="#336699">
@@ -62,30 +62,17 @@
   </style>
 
   <script>
-    var img, root, span;
-    document.addEventListener('DOMContentLoaded', function () {
-      document.querySelector('input[name="spacing"]').onchange = changeSpacing;
-      document.querySelector('input[name="blur"]').onchange = blurImg;
-      document.querySelector('input[name="base"]').onchange = changeBase;
-      img = document.querySelector('img');
-      span = document.querySelector('.hl')
-      root = document.documentElement;
-    }, false)
+    var controls = document.querySelectorAll('.controls input');
 
-    function changeSpacing(event) {
-      var val = event.target.value;
-      root.style.setProperty('--spacing', val + 'px');
+    function handleUpdate() {
+      var sizing = this.dataset.sizing || '';
+      document.documentElement.style.setProperty('--' + this.name, this.value + sizing);
     }
 
-    function blurImg(event) {
-      var val = event.target.value;
-      root.style.setProperty('--blur', val + 'px');
-    }
-
-    function changeBase(event) {
-      var val = event.target.value;
-      root.style.setProperty('--base', val);
-    }
+    controls.forEach(function (control) {
+      control.addEventListener('mousedown', handleUpdate);
+      control.addEventListener('input', handleUpdate);
+    })
   </script>
 
 </body>
